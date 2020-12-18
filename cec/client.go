@@ -27,7 +27,7 @@ func Open(output chan string) *Listener {
 }
 
 func (l *Listener) launch(output chan string) {
-	l.command = cmd.NewCmd("cec-client -t a -d 8")
+	l.command = cmd.NewCmd("cec-client", "-t", "a", "-d", "8")
 	reader, writer, err := os.Pipe()
 
 	if err != nil {
@@ -45,7 +45,6 @@ func (l *Listener) launch(output chan string) {
 
 	l.command.Stdout = stdout
 	l.command.Stderr = stderr
-
 	l.stdin = writer
 
 	go func() {
