@@ -10,8 +10,6 @@ import (
 )
 
 type Listener struct {
-	stdout  chan string
-	stderr  chan string
 	stdin   io.Writer
 	command *cmd.Cmd
 }
@@ -48,23 +46,18 @@ func (l *Listener) launch(output chan string) {
 	l.command.Stdout = stdout
 	l.command.Stderr = stderr
 
-	l.command.StartWithStdin(reader)
-
-	l.stdout = stdout
-	l.stderr = stderr
 	l.stdin = writer
 
 	go func() {
 		for {
 			select {
 			case out := <-stdout:
-				processOutput(out)
-				output <- out
+				output <- processOutput(out)
 			}
 		}
 	}()
 
-	statusChannel := l.command.Start()
+	statusChannel := l.command.StartWithStdin(reader)
 
 	select {
 	case <-statusChannel:
