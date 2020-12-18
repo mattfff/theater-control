@@ -1,7 +1,6 @@
 package cec
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -15,7 +14,7 @@ type Listener struct {
 }
 
 func processOutput(str string) string {
-	fmt.Printf("Outline: %v", str)
+	log.Printf("Outline: %v\n", str)
 	return str
 }
 
@@ -27,7 +26,12 @@ func Open(output chan string) *Listener {
 }
 
 func (l *Listener) launch(output chan string) {
-	l.command = cmd.NewCmd("cec-client", "-t", "a", "-d", "8")
+	opts := cmd.Options{
+		Streaming: true,
+		Buffered:  false,
+	}
+
+	l.command = cmd.NewCmdOptions(opts, "cec-client", "-t", "a", "-d", "8")
 	reader, writer, err := os.Pipe()
 
 	if err != nil {
@@ -40,17 +44,12 @@ func (l *Listener) launch(output chan string) {
 		reader.Close()
 	}()
 
-	stderr := make(chan string, 100)
-	stdout := make(chan string, 100)
-
-	l.command.Stdout = stdout
-	l.command.Stderr = stderr
 	l.stdin = writer
 
 	go func() {
 		for {
 			select {
-			case out := <-stdout:
+			case out := <-l.command.Stdout:
 				output <- processOutput(out)
 			}
 		}
@@ -61,7 +60,7 @@ func (l *Listener) launch(output chan string) {
 	select {
 	case <-statusChannel:
 		return
-	case err := <-stderr:
+	case err := <-l.command.Stderr:
 		log.Printf("Error: %v\n", err)
 	default:
 	}
