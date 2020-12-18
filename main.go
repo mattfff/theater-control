@@ -13,7 +13,7 @@ var (
 
 func main() {
 	var err error
-	myAmp, err = amp.Open("/dev/tty.usbserial-1410")
+	myAmp, err = amp.Open("/dev/ttyUSB0")
 	defer myAmp.Close()
 
 	statusChannel := make(chan amp.StatusMap)
