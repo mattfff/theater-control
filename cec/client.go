@@ -3,15 +3,17 @@ package cec
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/go-cmd/cmd"
 )
 
 type Listener struct {
-	Stdout chan string
-	Stderr chan string
-	Stdin  io.Reader
+	stdout  chan string
+	stderr  chan string
+	stdin   io.Writer
+	command *cmd.Cmd
 }
 
 func processOutput(str string) string {
@@ -19,44 +21,62 @@ func processOutput(str string) string {
 	return str
 }
 
-func Open() *Listener {
+func Open(output chan string) *Listener {
 	listener := Listener{}
-	listener.Launch()
+	listener.launch(output)
 
 	return &listener
 }
 
-func (l *Listener) Launch() {
-	cecCommand := cmd.NewCmd("cec-client")
-	stdout := make(chan string, 100)
+func (l *Listener) launch(output chan string) {
+	l.command = cmd.NewCmd("cec-client -t a -d 8")
+	reader, writer, err := os.Pipe()
+
+	if err != nil {
+		log.Fatalf("Failed to open pipe %v", err)
+		return
+	}
+
+	defer func() {
+		writer.Close()
+		reader.Close()
+	}()
+
 	stderr := make(chan string, 100)
 
-	_, stdin, _ := os.Pipe()
+	l.command.StartWithStdin(reader)
 
-	cecCommand.StartWithStdin(stdin)
-
-	l.Stdout = stdout
-	l.Stderr = stderr
-	l.Stdin = stdin
+	l.stdout = output
+	l.stderr = stderr
+	l.stdin = writer
 
 	go func() {
 		for {
 			select {
-			case output := <-stdout:
-				processOutput(output)
-				processOutput(output)
+			case out := <-output:
+				processOutput(out)
 			}
 		}
 	}()
 
-	cecCommand.Stdout = stdout
-	cecCommand.Stderr = stderr
+	l.command.Stdout = output
+	l.command.Stderr = stderr
 
-	statusChannel := cecCommand.Start()
+	statusChannel := l.command.Start()
 
 	select {
 	case <-statusChannel:
 		return
+	case err := <-stderr:
+		log.Printf("Error: %v\n", err)
 	default:
 	}
+}
+
+func (l *Listener) Close() {
+	l.command.Stop()
+}
+
+func (l *Listener) Send(command []byte) {
+	l.stdin.Write(command)
 }

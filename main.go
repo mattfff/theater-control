@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"parasound/cec"
-	"parasound/ui"
 
 	"parasound/amp"
 )
@@ -12,22 +11,16 @@ var (
 	myAmp *amp.Amp
 )
 
-func handleCecOutput(cecClient *cec.Listener, myAmp *amp.Amp) {
-	for {
-		select {
-		case output := <-cecClient.Stdout:
-			myAmp.SendCommand(amp.Command(output[0]))
-		}
-	}
-}
-
 func main() {
 	var err error
 	myAmp, err = amp.Open("/dev/tty.usbserial-1410")
 	defer myAmp.Close()
 
 	statusChannel := make(chan amp.StatusMap)
-	// cecClient := cec.Open()
+	cecChannel := make(chan string)
+	cecClient := cec.Open(cecChannel)
+
+	defer cecClient.Close()
 
 	// go handleCecOutput(cecClient, myAmp)
 
@@ -39,5 +32,5 @@ func main() {
 
 	myAmp.SendCommand(amp.CommandGetStatus)
 
-	ui.Run(myAmp, statusChannel)
+	// ui.Run(myAmp, statusChannel)
 }
