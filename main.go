@@ -32,5 +32,12 @@ func main() {
 
 	myAmp.SendCommand(amp.CommandGetStatus)
 
+	for {
+		select {
+		case cecOutput := <-cecChannel:
+			log.Println(cecOutput)
+		}
+	}
+
 	// ui.Run(myAmp, statusChannel)
 }
