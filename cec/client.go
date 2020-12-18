@@ -43,24 +43,26 @@ func (l *Listener) launch(output chan string) {
 	}()
 
 	stderr := make(chan string, 100)
+	stdout := make(chan string, 100)
+
+	l.command.Stdout = stdout
+	l.command.Stderr = stderr
 
 	l.command.StartWithStdin(reader)
 
-	l.stdout = output
+	l.stdout = stdout
 	l.stderr = stderr
 	l.stdin = writer
 
 	go func() {
 		for {
 			select {
-			case out := <-output:
+			case out := <-stdout:
 				processOutput(out)
+				output <- out
 			}
 		}
 	}()
-
-	l.command.Stdout = output
-	l.command.Stderr = stderr
 
 	statusChannel := l.command.Start()
 
