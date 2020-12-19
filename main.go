@@ -54,7 +54,7 @@ func handleAmpMessage(ampStatus amp.StatusMap) {
 	}
 
 	if volume, hasVolume := ampStatus[amp.StatusVolume]; hasVolume {
-		var scaledVolume = int(math.Round(((float64(volume) - 10.0) / 96.0) * 127.0))
+		var scaledVolume = int(math.Round(((float64(volume) - 10.0) / 96.0) * 100.0))
 		values := []uint{uint(scaledVolume)}
 
 		if muted, hasMuted := status[amp.StatusMute]; hasMuted {
