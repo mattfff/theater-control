@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -113,12 +112,7 @@ func (l *Listener) launch(output chan Message) {
 	}
 
 	l.command = cmd.NewCmdOptions(opts, "cec-client", "-t", "a", "-d", "8")
-	reader, writer, err := os.Pipe()
-
-	if err != nil {
-		log.Fatalf("Failed to open pipe %v", err)
-		return
-	}
+	reader, writer := io.Pipe()
 
 	defer func() {
 		writer.Close()
