@@ -170,7 +170,7 @@ func (l *Listener) Send(msg Message) {
 		values[index+2] = strconv.FormatInt(int64(each), 16)
 	}
 
-	command := strings.ToUpper(strings.Join(values, ":"))
+	command := strings.ToUpper(strings.Join(values, ":")) + "\n"
 
 	fmt.Printf("CEC command sent: %s\n", command)
 
