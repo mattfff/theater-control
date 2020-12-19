@@ -70,18 +70,16 @@ func handleOutput(raw string) (Message, bool) {
 	// example command
 	// 2020/12/18 17:51:22 TRAFFIC: [         5310420]	<< 50:90:00
 
-	log.Printf("CEC command received: %s\n", raw)
-
 	var indexStart = strings.LastIndex(raw, INCOMING) + len(INCOMING) + 1
 	command := strings.TrimSpace(raw[indexStart:])
-
-	log.Printf("command %s\n", command)
 
 	parts := strings.Split(command, ":")
 
 	if len(parts) < 3 {
 		return Message{}, false
 	}
+
+	log.Printf("CEC command received: %s\n", raw)
 
 	source := uint(parts[0][0])
 	target := uint(parts[0][1])
