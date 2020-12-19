@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
@@ -121,7 +120,6 @@ func (l *Listener) launch(output chan Message) {
 	}()
 
 	l.stdin = writer
-	l.stdout = reader
 
 	go func() {
 		for {
@@ -138,7 +136,7 @@ func (l *Listener) launch(output chan Message) {
 		}
 	}()
 
-	statusChannel := l.command.Start()
+	statusChannel := l.command.StartWithStdin(reader)
 
 	select {
 	case <-statusChannel:
@@ -170,9 +168,7 @@ func (l *Listener) Send(msg Message) {
 
 	fmt.Printf("CEC command sent: %s\n", command)
 
-	_, err := fmt.Fprint(l.stdin, command)
-	log.Printf("Print Err: %v", err)
-
-	_, err = io.Copy(os.Stdout, l.stdout)
-	log.Printf("Err: %v", err)
+	if _, err := fmt.Fprint(l.stdin, command); err != nil {
+		log.Fatalf("Error sending to pipe: %v", err)
+	}
 }
