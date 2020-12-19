@@ -163,9 +163,9 @@ func (l *Listener) Send(msg Message) {
 		values[index+2] = strconv.FormatInt(int64(each), 16)
 	}
 
-	command := "tx " + strings.ToLower(strings.Join(values, ":")+"\n")
+	command := "tx " + strings.ToLower(strings.Join(values, ":"))
 
 	fmt.Printf("CEC command sent: %s\n", command)
 
-	io.WriteString(l.stdin, command)
+	fmt.Fprintf(l.stdin, command)
 }
