@@ -32,9 +32,9 @@ const (
 )
 
 const (
-	MessagePower          uint = 90
-	MessageGiveAudio      uint = 71
-	MessageControlPressed uint = 44
+	MessagePower          uint = 144
+	MessageGiveAudio      uint = 113
+	MessageControlPressed uint = 68
 	MessageReportAudio    uint = 122
 )
 
@@ -51,9 +51,9 @@ const (
 	ButtonSetupMenu    uint = 10
 	ButtonContentsMenu uint = 11
 	ButtonExit         uint = 13
-	ButtonVolumeUp     uint = 41
-	ButtonVolumeDown   uint = 42
-	ButtonMute         uint = 43
+	ButtonVolumeUp     uint = 65
+	ButtonVolumeDown   uint = 66
+	ButtonMute         uint = 67
 )
 
 type Message struct {
@@ -83,7 +83,7 @@ func handleOutput(raw string) (Message, bool) {
 
 	source := uint(parts[0][0])
 	target := uint(parts[0][1])
-	message, _ := strconv.ParseUint(parts[0], 16, 8)
+	message, _ := strconv.ParseUint(parts[1], 16, 8)
 
 	values := make([]uint, len(parts)-2)
 
