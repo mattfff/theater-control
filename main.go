@@ -73,7 +73,7 @@ func handleAmpMessage(ampStatus amp.StatusMap) {
 }
 
 func handleCecMessage(message cec.Message) {
-	log.Printf("Parsed message: %v", message)
+	log.Printf("Source: %i, Dest: %i, Command: %i, Values: %v", message.Source, message.Target, message.Message, message.Values)
 	if message.Target == cec.TypeAudio {
 		switch message.Message {
 		case cec.MessageControlPressed:
