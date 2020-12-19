@@ -143,7 +143,7 @@ func (l *Listener) launch(output chan Message) {
 	}()
 
 	go func() {
-		timer := time.NewTimer(1 * time.Second)
+		timer := time.NewTicker(1 * time.Second)
 		for {
 			select {
 			case <-timer.C:
