@@ -173,5 +173,5 @@ func (l *Listener) Send(msg Message) {
 
 	fmt.Printf("CEC command sent: %s\n", command)
 
-	fmt.Fprintf(l.stdin, "%s\n", command)
+	io.WriteString(l.stdin, command)
 }
