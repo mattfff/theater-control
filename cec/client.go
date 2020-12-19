@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-cmd/cmd"
 )
@@ -141,7 +142,19 @@ func (l *Listener) launch(output chan Message) {
 		}
 	}()
 
-	statusChannel := l.command.StartWithStdin(reader)
+	go func() {
+		timer := time.NewTimer(1 * time.Second)
+		for {
+			select {
+			case <-timer.C:
+				out := make([]byte, 1024)
+				reader.Read(out)
+				fmt.Printf("Out: %v", out)
+			}
+		}
+	}()
+
+	statusChannel := l.command.Start()
 
 	select {
 	case <-statusChannel:
