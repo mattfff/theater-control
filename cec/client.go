@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
@@ -12,6 +13,7 @@ import (
 
 type Listener struct {
 	stdin   io.Writer
+	stdout  io.Reader
 	command *cmd.Cmd
 }
 
@@ -119,6 +121,7 @@ func (l *Listener) launch(output chan Message) {
 	}()
 
 	l.stdin = writer
+	l.stdout = reader
 
 	go func() {
 		for {
@@ -135,7 +138,7 @@ func (l *Listener) launch(output chan Message) {
 		}
 	}()
 
-	statusChannel := l.command.StartWithStdin(reader)
+	statusChannel := l.command.Start()
 
 	select {
 	case <-statusChannel:
@@ -168,4 +171,6 @@ func (l *Listener) Send(msg Message) {
 	fmt.Printf("CEC command sent: %s\n", command)
 
 	fmt.Fprintf(l.stdin, command)
+
+	io.Copy(os.Stdout, l.stdout)
 }
