@@ -79,8 +79,6 @@ func handleOutput(raw string) (Message, bool) {
 		return Message{}, false
 	}
 
-	log.Printf("CEC command received: %s\n", raw)
-
 	source, _ := strconv.ParseUint(string(parts[0][0]), 16, 8)
 	target, _ := strconv.ParseUint(string(parts[0][1]), 16, 8)
 	message, _ := strconv.ParseUint(parts[1], 16, 8)
@@ -132,6 +130,7 @@ func (l *Listener) launch(output chan Message) {
 		for {
 			select {
 			case out := <-l.command.Stdout:
+				log.Printf("CEC command: %s\n", out)
 				if strings.LastIndex(out, INCOMING) >= 0 {
 					message, hasMessage := handleOutput(out)
 					if hasMessage {
@@ -172,7 +171,7 @@ func (l *Listener) Send(msg Message) {
 
 	command := strings.ToUpper(strings.Join(values, ":")) + "\n"
 
-	fmt.Printf("CEC command sent: %s\n", command)
+	fmt.Printf("CEC command sent: %s", command)
 
 	l.stdin.Write([]byte(command))
 }
