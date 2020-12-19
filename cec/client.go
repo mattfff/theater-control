@@ -81,8 +81,8 @@ func handleOutput(raw string) (Message, bool) {
 
 	log.Printf("CEC command received: %s\n", raw)
 
-	source := uint(parts[0][0])
-	target := uint(parts[0][1])
+	source, _ := strconv.ParseUint(string(parts[0][0]), 16, 8)
+	target, _ := strconv.ParseUint(string(parts[0][1]), 16, 8)
 	message, _ := strconv.ParseUint(parts[1], 16, 8)
 
 	values := make([]uint, len(parts)-2)
@@ -93,8 +93,8 @@ func handleOutput(raw string) (Message, bool) {
 	}
 
 	return Message{
-		Target:  target,
-		Source:  source,
+		Target:  uint(target),
+		Source:  uint(source),
 		Message: uint(message),
 		Values:  values,
 	}, true
