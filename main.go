@@ -21,7 +21,7 @@ func main() {
 
 	statusChannel := make(chan amp.StatusMap)
 	cecChannel := make(chan cec.Message)
-	cecClient = cec.Open(cecChannel)
+	cecClient = cec.Open()
 
 	defer cecClient.Close()
 
@@ -32,6 +32,7 @@ func main() {
 	}
 
 	go myAmp.Poll(statusChannel)
+	go cecClient.Start(cecChannel)
 
 	myAmp.SendCommand(amp.CommandGetStatus)
 

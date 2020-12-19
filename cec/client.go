@@ -98,14 +98,13 @@ func handleOutput(raw string) (Message, bool) {
 	}, true
 }
 
-func Open(output chan Message) *Listener {
+func Open() *Listener {
 	listener := Listener{}
-	listener.launch(output)
 
 	return &listener
 }
 
-func (l *Listener) launch(output chan Message) {
+func (l *Listener) Start(output chan Message) {
 	opts := cmd.Options{
 		Streaming: true,
 		Buffered:  false,
@@ -113,6 +112,11 @@ func (l *Listener) launch(output chan Message) {
 
 	l.command = cmd.NewCmdOptions(opts, "cec-client", "-t", "a", "-d", "8")
 	reader, writer := io.Pipe()
+
+	defer func() {
+		reader.Close()
+		writer.Close()
+	}()
 
 	l.stdin = writer
 
@@ -138,7 +142,6 @@ func (l *Listener) launch(output chan Message) {
 		return
 	case err := <-l.command.Stderr:
 		log.Printf("Error: %v\n", err)
-	default:
 	}
 }
 
