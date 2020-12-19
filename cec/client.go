@@ -75,8 +75,6 @@ func handleOutput(raw string) (Message, bool) {
 
 	parts := strings.Split(command, ":")
 
-	log.Printf("Parts: %v\n", parts)
-
 	if len(parts) < 3 {
 		return Message{}, false
 	}
