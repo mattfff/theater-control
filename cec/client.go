@@ -6,7 +6,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/go-cmd/cmd"
 )
@@ -121,8 +120,6 @@ func (l *Listener) launch(output chan Message) {
 
 	l.stdin = writer
 
-	writer.Write([]byte("Something"))
-
 	go func() {
 		for {
 			select {
@@ -138,19 +135,7 @@ func (l *Listener) launch(output chan Message) {
 		}
 	}()
 
-	go func() {
-		timer := time.NewTicker(1 * time.Second)
-		for {
-			select {
-			case <-timer.C:
-				out := make([]byte, 32)
-				reader.Read(out)
-				fmt.Printf("Out: %v\n", out)
-			}
-		}
-	}()
-
-	statusChannel := l.command.Start()
+	statusChannel := l.command.StartWithStdin(reader)
 
 	select {
 	case <-statusChannel:
