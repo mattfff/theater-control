@@ -81,7 +81,7 @@ func handleOutput(raw string) Message {
 	target := uint(parts[0][1])
 	message, _ := strconv.ParseUint(parts[0], 16, 8)
 
-	values := make([]uint, len(parts)-2, 0)
+	values := make([]uint, len(parts)-2)
 
 	for index, val := range parts[2:] {
 		parsed, _ := strconv.ParseUint(val, 16, 8)
