@@ -66,7 +66,7 @@ type Message struct {
 const INCOMING = "<<"
 const OUTGOING = ">>"
 
-func handleOutput(raw string) Message {
+func handleOutput(raw string) (Message, bool) {
 	// example command
 	// 2020/12/18 17:51:22 TRAFFIC: [         5310420]	<< 50:90:00
 
@@ -78,6 +78,10 @@ func handleOutput(raw string) Message {
 	log.Printf("command %s\n", command)
 
 	parts := strings.Split(command, ":")
+
+	if len(parts) < 3 {
+		return Message{}, false
+	}
 
 	source := uint(parts[0][0])
 	target := uint(parts[0][1])
@@ -95,7 +99,7 @@ func handleOutput(raw string) Message {
 		Source:  source,
 		Message: uint(message),
 		Values:  values,
-	}
+	}, true
 }
 
 func Open(output chan Message) *Listener {
@@ -131,7 +135,10 @@ func (l *Listener) launch(output chan Message) {
 			select {
 			case out := <-l.command.Stdout:
 				if strings.LastIndex(out, INCOMING) >= 0 {
-					output <- handleOutput(out)
+					message, hasMessage := handleOutput(out)
+					if hasMessage {
+						output <- message
+					}
 				}
 			}
 		}
