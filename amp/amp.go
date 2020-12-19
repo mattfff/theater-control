@@ -173,10 +173,6 @@ type Amp struct {
 	mu   sync.Mutex
 }
 
-var (
-	status StatusMap
-)
-
 // Open opens a connection to the amp.
 func Open(portName string) (*Amp, error) {
 	options := serial.OpenOptions{
@@ -194,8 +190,6 @@ func Open(portName string) (*Amp, error) {
 		log.Fatalf("serial.Open %f", err)
 		return nil, err
 	}
-
-	status = make(StatusMap)
 
 	return &Amp{port: serialPort, open: true}, nil
 }
@@ -221,9 +215,8 @@ func (a *Amp) Poll(c chan<- StatusMap) {
 			log.Fatalf("read command result %f", err)
 		}
 
-		// fmt.Printf("%b\n", result)
-
 		if err == nil || err != io.EOF {
+			status := make(StatusMap)
 			for _, val := range result {
 				switch res := StatusFlag(val); res {
 				case StatusFeedbackStart:
