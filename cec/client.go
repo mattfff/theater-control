@@ -170,8 +170,9 @@ func (l *Listener) Send(msg Message) {
 
 	fmt.Printf("CEC command sent: %s\n", command)
 
-	fmt.Fprint(l.stdin, command)
+	_, err := fmt.Fprint(l.stdin, command)
+	log.Printf("Print Err: %v", err)
 
-	_, err := io.Copy(os.Stdout, l.stdout)
+	_, err = io.Copy(os.Stdout, l.stdout)
 	log.Printf("Err: %v", err)
 }
