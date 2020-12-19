@@ -116,8 +116,8 @@ func (l *Listener) launch(output chan Message) {
 	reader, writer := io.Pipe()
 
 	defer func() {
-		writer.Close()
-		reader.Close()
+		// writer.Close()
+		// reader.Close()
 	}()
 
 	l.stdin = writer
