@@ -171,7 +171,7 @@ func (l *Listener) Send(msg Message) {
 
 	command := "tx " + strings.ToLower(strings.Join(values, ":"))
 
-	fmt.Printf("CEC command sent: %s", command)
+	fmt.Printf("CEC command sent: %s\n", command)
 
-	l.stdin.Write([]byte(command))
+	fmt.Fprintf(l.stdin, "%s\n", command)
 }
