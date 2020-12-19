@@ -114,11 +114,6 @@ func (l *Listener) launch(output chan Message) {
 	l.command = cmd.NewCmdOptions(opts, "cec-client", "-t", "a", "-d", "8")
 	reader, writer := io.Pipe()
 
-	defer func() {
-		// writer.Close()
-		// reader.Close()
-	}()
-
 	l.stdin = writer
 
 	go func() {
@@ -165,8 +160,6 @@ func (l *Listener) Send(msg Message) {
 	}
 
 	command := "tx " + strings.ToLower(strings.Join(values, ":"))
-
-	fmt.Printf("CEC command sent: %s\n", command)
 
 	if _, err := fmt.Fprint(l.stdin, command); err != nil {
 		log.Fatalf("Error sending to pipe: %v", err)
