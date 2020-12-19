@@ -63,8 +63,8 @@ type Message struct {
 	Values  []uint
 }
 
-const INCOMING = "<<"
-const OUTGOING = ">>"
+const OUTGOING = "<<"
+const INCOMING = ">>"
 
 func handleOutput(raw string) (Message, bool) {
 	// example command
