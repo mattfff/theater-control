@@ -72,8 +72,10 @@ func handleOutput(raw string) Message {
 
 	log.Printf("CEC command received: %s\n", raw)
 
-	var indexStart = strings.LastIndex(raw, INCOMING) + 1
+	var indexStart = strings.LastIndex(raw, INCOMING) + len(INCOMING) + 1
 	command := strings.TrimSpace(raw[indexStart:])
+
+	log.Printf("command %s\n", command)
 
 	parts := strings.Split(command, ":")
 
