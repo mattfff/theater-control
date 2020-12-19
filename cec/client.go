@@ -127,6 +127,8 @@ func (l *Listener) launch(output chan Message) {
 
 	l.stdin = writer
 
+	writer.Write([]byte("Something"))
+
 	go func() {
 		for {
 			select {
@@ -147,9 +149,9 @@ func (l *Listener) launch(output chan Message) {
 		for {
 			select {
 			case <-timer.C:
-				out := make([]byte, 1024)
+				out := make([]byte, 32)
 				reader.Read(out)
-				fmt.Printf("Out: %v", out)
+				fmt.Printf("Out: %v\n", out)
 			}
 		}
 	}()
