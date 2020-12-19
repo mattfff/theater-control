@@ -12,8 +12,8 @@ import (
 )
 
 type Listener struct {
-	stdin   io.Writer
-	stdout  io.Reader
+	stdin   *io.PipeWriter
+	stdout  *io.PipeReader
 	command *cmd.Cmd
 }
 
