@@ -172,5 +172,6 @@ func (l *Listener) Send(msg Message) {
 
 	fmt.Fprint(l.stdin, command)
 
-	io.Copy(os.Stdout, l.stdout)
+	_, err := io.Copy(os.Stdout, l.stdout)
+	log.Printf("Err: %v", err)
 }
