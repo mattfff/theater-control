@@ -94,6 +94,7 @@ func handleCecMessage(message cec.Message) {
 			case cec.PowerStatusOn:
 				if status[amp.StatusPower] == 0 {
 					myAmp.SendCommand(amp.CommandPowerOn)
+					myAmp.SendCommand(amp.CommandSetVolume, 58) // default to vol 50 on powerup
 				}
 			case cec.PowerStatusStandby:
 				if status[amp.StatusPower] == 1 {
