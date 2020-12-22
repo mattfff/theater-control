@@ -105,7 +105,7 @@ func handleCecMessage(message cec.Message) {
 }
 
 func pollTVPower() *time.Timer {
-	timer := time.NewTimer(10000 * time.Millisecond)
+	timer := time.NewTicker(10000 * time.Millisecond)
 
 	go func() {
 		for {
