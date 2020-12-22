@@ -37,8 +37,8 @@ func main() {
 
 	myAmp.SendCommand(amp.CommandGetStatus)
 
-	timer := pollTVPower()
-	defer timer.Stop()
+	ticker := pollTVPower()
+	defer ticker.Stop()
 
 	for {
 		select {
@@ -104,7 +104,7 @@ func handleCecMessage(message cec.Message) {
 	}
 }
 
-func pollTVPower() *time.Timer {
+func pollTVPower() *time.Ticker {
 	timer := time.NewTicker(10000 * time.Millisecond)
 
 	go func() {
