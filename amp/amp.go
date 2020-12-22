@@ -18,7 +18,7 @@ const (
 	CommandPowerToggle             Command = 6
 	CommandVolumeUp                Command = 53
 	CommandVolumeDown              Command = 54
-	CommandSetVolume               Command = 130
+	CommandSetVolume               Command = 180
 	CommandMuteToggle              Command = 7
 	CommandMuteOn                  Command = 32
 	CommandMuteOff                 Command = 33
