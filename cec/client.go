@@ -32,10 +32,18 @@ const (
 )
 
 const (
+	MessageGivePower      uint = 143
 	MessagePower          uint = 144
 	MessageGiveAudio      uint = 113
 	MessageControlPressed uint = 68
 	MessageReportAudio    uint = 122
+)
+
+const (
+	PowerStatusOn          uint = 0
+	PowerStatusStandby     uint = 1
+	PowerStatusStandbyToOn uint = 2
+	PowerStatusOnToStandby uint = 3
 )
 
 const (

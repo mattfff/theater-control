@@ -4,6 +4,7 @@ import (
 	"log"
 	"math"
 	"parasound/cec"
+	"time"
 
 	"parasound/amp"
 )
@@ -35,6 +36,9 @@ func main() {
 	go cecClient.Start(cecChannel)
 
 	myAmp.SendCommand(amp.CommandGetStatus)
+
+	timer := pollTVPower()
+	defer timer.Stop()
 
 	for {
 		select {
@@ -85,6 +89,36 @@ func handleCecMessage(message cec.Message) {
 			case cec.ButtonMute:
 				myAmp.SendCommand(amp.CommandMuteToggle)
 			}
+		case cec.MessagePower:
+			switch message.Values[0] {
+			case cec.PowerStatusOn:
+				if status[amp.StatusPower] == 0 {
+					myAmp.SendCommand(amp.CommandPowerOn)
+				}
+			case cec.PowerStatusStandby:
+				if status[amp.StatusPower] == 1 {
+					myAmp.SendCommand(amp.CommandPowerOff)
+				}
+			}
 		}
 	}
+}
+
+func pollTVPower() *time.Timer {
+	timer := time.NewTimer(10000 * time.Millisecond)
+
+	go func() {
+		for {
+			select {
+			case <-timer.C:
+				cecClient.Send(cec.Message{
+					Source:  cec.TypeAudio,
+					Target:  cec.TypeTV,
+					Message: cec.MessageGivePower,
+				})
+			}
+		}
+	}()
+
+	return timer
 }
